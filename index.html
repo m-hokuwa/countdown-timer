@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>Timer</title>
+    <!-- Font -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'> -->
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="./css/countdown-style.css">
+    <!-- JS -->
+    <script type="text/javascript" src="./js/easytimer.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+    <script>
+        var $ = jQuery = require("./js/jquery-3.3.1.min.js");
+
+        var timer = new Timer();
+        var pauseFlag = false;
+        var pauseTime = 0;
+        
+        // タイマーをセットする関数
+        function setTimer(setSeconds){
+            $('#countdown .values').html('Wait...');
+            timer.stop();
+            timer.start({countdown: true, startValues: {seconds: setSeconds}});
+        }
+        // Textareaから入力値を受けとる
+        function setCustomTime(){
+            // 値を取得する
+            var hour = document.getElementById('hours').value;
+            var min = document.getElementById('minites').value;
+            var sec = document.getElementById('seconds').value;
+            
+            // 空白チェック、空白なら0を入力
+            if(hour==""){
+                hour = "0";
+            }
+            if(min==""){
+                min = "0";
+            }
+            if(sec==""){
+                sec="0";
+            }
+            
+            // 全部0だった場合はエラーを出力
+            if(hour == "0" && min == "0" && sec == "0"){
+                alert("数値が入力されていません");
+                return -1;
+            }
+
+            // 数字かどうかチェック
+            if(isNaN(hour) || isNaN(min) || isNaN(sec)){
+                alert("入力値が数字ではありません");
+                return -1;
+            }
+
+            // int型に変換
+            numHour = parseInt(hour, 10);
+            numMin = parseInt(min, 10);
+            numSec =parseInt(sec, 10);
+            
+            // マイナス値などを弾く
+            if(numHour < 0 || numMin < 0  || numSec < 0){
+                alert("不正な数値です");
+                return -1;
+            }
+            
+            sum = numHour * 3600 + numMin * 60 + numSec;
+            setTimer(sum);
+        }
+        
+        // ボタン押下したとき呼出される
+        $(function() {
+            // 3分
+            $('.btns .btn.btn-primary.btn-lg').click(function(e) {
+                timerClear();
+                setTimer(180);
+            });
+            // 5分
+            $('.btns .btn.btn-success.btn-lg').click(function(e) {
+                timerClear();
+                setTimer(300);
+            });
+            // 10分
+            $('.btns .btn.btn-info.btn-lg').click(function(e) {
+                timerClear();
+                setTimer(600);
+            });
+            // 15分
+            $('.btns .btn.btn-warning.btn-lg').click(function(e) {
+                timerClear();
+                setTimer(900);
+            });
+            // 60分
+            $('.btns .btn.btn-danger.btn-lg').click(function(e) {
+                timerClear();
+                setTimer(3600);
+            });
+            // custom time
+            $('.custom-time .btn.btn-primary.btn-lg').click(function(e) {
+                timerClear();
+                setCustomTime();
+            });
+            // pause
+            $('.ctrl .btn.btn-info.btn-lg').click(function(e) {
+                if(pauseFlag){
+                    timer.start({countdown: true, startValues: {seconds: pauseTime}});
+                    pauseFlag = false;
+                    $('.ctrl .btn.btn-info.btn-lg').html('Pause');
+                }
+                else{
+                    totalTime = timer.getTotalTimeValues().secondTenths;
+                    if(totalTime == 0){
+                        return 1;
+                    }
+                    else{
+                        timer.pause();
+                        pauseFlag = true;
+                        $('.ctrl .btn.btn-info.btn-lg').html('Restart');
+                        pauseTime = timer.getTimeValues();
+                    }
+                }
+            });
+            // Clear
+            $('.ctrl .btn.btn-danger.btn-lg').click(function(e) {
+                timerClear();
+            });
+        });
+        
+        // タイマーをクリアする関数
+        function timerClear(){
+            if(timer.getTotalTimeValues().secondTenths > 0){
+                    timer.stop();
+                    $('#countdown .values').html('Set Time!');
+                    $('.ctrl .btn.btn-info.btn-lg').html('Pause');
+                    pauseFlag = false;
+            } 
+        }
+        
+        // 秒が更新されると自動的に呼出し
+        $('#countdown .values').html(timer.getTimeValues().toString());
+            timer.addEventListener('secondsUpdated', function (e) {
+            $('#countdown .values').html(timer.getTimeValues().toString());
+        });
+        
+        // カウントが０になると自動的に呼出し
+        timer.addEventListener('targetAchieved', function (e) {
+            $('#countdown .values').html('終了!!!');
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <h1>タイマー</h1>
+    </nav>
+    <div class="container">
+        <div id="countdown">
+            <div class="values">Set Time!</div>
+        </div>
+        <div class="ctrl">
+            <button class="btn btn-info btn-lg">Pause</button>
+            <button class="btn btn-danger btn-lg">Clear</button>
+        </div>
+        <div class="btns">
+            <h2>固定値</h2>
+            <button class="btn btn-primary btn-lg">3分</button>
+            <button class="btn btn-success btn-lg">5分</button>
+            <button class="btn btn-info btn-lg">10分</button>
+            <button class="btn btn-warning btn-lg">15分</button>
+            <button class="btn btn-danger btn-lg">60分</button>
+        </div>
+        <div class="custom-time">
+            <h2>任意設定</h2>
+            <textarea type="number" rows="1" cols="1" id="hours" name="hours">0</textarea>
+            <span>h</span>
+            <textarea type="number" rows="1" cols="1" id="minites" name="minites">3</textarea>
+            <span>m</span>
+            <textarea type="number" rows="1" cols="1" id="seconds" name="seconds">0</textarea>
+            <span>s</span>
+            <div>
+                <button class="btn btn-primary btn-lg">OK</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

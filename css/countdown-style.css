@@ -1,0 +1,54 @@
+body{
+    font-family: "Yu Gothic", "Meiryo";
+    font-weight: 500;
+    color: #333333;
+    background: #F4F5F7;
+}
+
+h1{
+    text-align: center;
+    color:honeydew;
+}
+
+.container .values{
+    font-family: "Times New Roman";
+    text-align: center;
+    font-size: 8em;
+}
+
+@media screen and ( max-width:480px )
+{
+	.container .values{
+		font-size: 4em;
+	}
+}
+
+.container .ctrl{
+    text-align: center;
+    margin: 10px;
+}
+
+.container .btns{
+    text-align: center;
+}
+
+.container .btns button{
+    margin: 1px;
+}
+
+.container .custom-time{
+    font-size: 1.5em;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.container .custom-time textarea{
+    text-align: right;
+    width: 10%;
+    resize: none;
+    overflow: hidden;
+    border: 2px solid #678;
+    border-radius: 0.67em;
+    padding: 0.3em;
+    font-size: 1.5em;
+}
